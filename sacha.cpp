@@ -1,40 +1,41 @@
-#include <iostream>
-#include <string>
+#include <cstdio>
+#include <string.h>
 using namespace std;
 
-int dist(string s1, string s2)
+#define MAX 200
+
+int dist(char *s1, char *s2)
 {
-    int d = 0;
-    for (unsigned int i=0; i<s1.size(); i++)
-        if (s1[i] != s2[i])
-            d++;
-    return d;
+    int n=0;
+    while (*s1)
+        n += (*s1++ != *s2++);
+    return n;
 }
 
 int main()
 {
     int n;
-    cin >> n;
+    scanf("%d", &n);
 
     while (n--) {
-        string sacha;
+        char sacha[MAX];
         int szDict;
-        cin >> sacha;
-        cin >> szDict;
+        scanf("%s", sacha);
+        scanf("%d", &szDict);
         
         int minDist = 200;
-        string closest;
+        char closest[MAX];
         while (szDict--) {
             int min;
-            string cmp;
-            cin >> cmp;
+            char cmp[MAX];
+            scanf("%s", cmp);
             
             if ((min = dist(sacha, cmp)) < minDist) {
                 minDist = min;
-                closest = cmp;
+                strcpy(closest, cmp);
             }
         }
-        cout << closest << endl;
+        printf("%s\n", closest);
     }
 
     return 0;
