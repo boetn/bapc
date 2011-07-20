@@ -6,7 +6,7 @@ using namespace std;
 
 int dist(char *s1, char *s2)
 {
-    int n=0;
+    int n = 0;
     while (*s1)
         n += (*s1++ != *s2++);
     return n;
