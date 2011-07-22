@@ -8,19 +8,16 @@ using namespace std;
 
 vector<int> rel;
 
+//int dist(int pos)
+//{
+//    int d=0;
+//    for (int j=1; j<(int)rel.size(); j++)
+//        d += abs(pos-rel[j]);
+//    return d;
+//}
+
 int solve()
 {
-    int dist=INT_MAX;
-    for (int i=0; i<30000; i++) {
-        int curr=0;
-        for (int j=1; j<(int)rel.size(); j++)
-            curr += abs(i-rel[j]);
-        if (curr<=dist)
-            dist = curr;
-        else //returnen als afstand weer stijgt
-            return dist;
-    }
-    return dist;
 }
 
 int main()
