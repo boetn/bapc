@@ -13,8 +13,14 @@
 #include <queue>
 #include <set>
 #include <sstream>
+#include <utility>
 #include <vector>
 using namespace std;
+
+#define sz(a) int((a).size())
+#define pb push_back
+#define all(c) (c).begin(),(c).end()
+#define tr(c,i) for(typeof((c).begin()) i=(c).begin(); i!=(c).end(); i++)
 
 int main()
 {
