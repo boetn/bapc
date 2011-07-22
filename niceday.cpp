@@ -41,7 +41,7 @@ int checkfreq()
 
 int main()
 {
-    freopen("in.txt", "r", stdin);
+    //freopen("in.txt", "r", stdin);
     int n;
     cin >> n;
 
