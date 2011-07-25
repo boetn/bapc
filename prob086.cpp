@@ -28,12 +28,10 @@ int max_intrest(int cap, vector< pair<int, int> > &obl)
     int dp[cap+1];
     memset(dp, 0, sizeof(dp));
     for (int i = 1; i <= cap; i++) {
-        int curr = 1;
         tr (obl, it) {
             int val = it->first, intr = it->second;
             if (i >= val)
                 dp[i] = max(dp[i], dp[i-val] + intr);
-            curr++;
         }
     }
     return dp[cap];
