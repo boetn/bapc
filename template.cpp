@@ -1,7 +1,10 @@
 #include <algorithm>
+#include <cassert>
+#include <cctype>
 #include <climits>
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <deque>
 #include <functional>
@@ -14,6 +17,7 @@
 #include <queue>
 #include <set>
 #include <sstream>
+#include <stack>
 #include <utility>
 #include <vector>
 using namespace std;
