@@ -101,7 +101,7 @@ int simulate(row bk[], int n)
                     bk[i].q.pop_front();
                     bk[i].progress = 0;
                 } else {
-                    bk[i].progress = timepast;
+                    bk[i].progress += timepast;
                     timepast = 0;
                 }
             }
