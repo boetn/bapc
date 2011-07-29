@@ -28,25 +28,30 @@ using namespace std;
 #define all(c) (c).begin(),(c).end()
 #define tr(c,i) for(typeof((c).begin()) i=(c).begin(); i!=(c).end(); i++)
 
-//betere oplossing: enkel events verwerken, en aan change alles optellen
+deque< pair<int, pair<int, int> > > change;
+deque< pair<int, pair<int, int> > > join;
 
 struct row {
     int timeneeded;
     int progress;
     deque<int> q;
-    deque< pair<int, int> > join;
-    deque< pair<int, int> > change;
 
     int waiting_time() {
-        int time = 0;
-        tr (q, it) time += *it;
-        return time + timeneeded * q.size();
+        return accumulate(all(q), 0) + timeneeded * sz(q) - progress;
+    }
+
+    int time_msx() 
+    {
+        deque<int>::iterator pos = find(all(q), -1);
+        return accumulate(q.begin(), pos, 0) +
+               (pos - q.begin()) * timeneeded
+               - progress;
     }
 };
 
 pair<int, int> best_row(row *bk, int n)
 {
-    int mintijd = 10000;
+    int mintijd = 1000000;
     int best = 0;
 
     for (int i = 0; i < n; i++) {
@@ -60,59 +65,63 @@ pair<int, int> best_row(row *bk, int n)
     return make_pair(best, mintijd);
 }
 
-int simulate(row *bk, int n)
+int simulate(row bk[], int n)
 {
     int row = best_row(bk, n).first;
-    bk[row].q.push_back(-1);
+    bk[row].q.pb(-1);
     int time = 0;
 
-    while (1) {
-        //events
-        int nope = 0;
-        for (int i = 0; i < n; i++) {
-            if (bk[i].join.empty())
-                continue;
-            pair<int, int> join = bk[i].join.front();
-            if (join.first == time) {
-                bk[i].q.pb(join.second);
-                bk[i].join.pop_front();
-                nope = 1;
-                break;
-            }
-        }
+    for (int i = 0; i < sz(change); i++) {
+        int changetime = change[i].first;
+        int r = change[i].second.first;
+        int perf = change[i].second.second;
 
-        for (int i = 0; !nope && i < n; i++) {
-            if (bk[i].change.empty())
-                continue;
-            pair<int, int> change = bk[i].change.front();
-            if (change.first == time) {
-                bk[i].timeneeded = change.second;
-                pair<int, int> curr_best = best_row(bk, n);
-                if (curr_best.second < bk[row].waiting_time()) {
-                    bk[row].q.erase(find(all(bk[row].q), -1));
-                    bk[curr_best.first].q.push_back(-1);
-                    bk[curr_best.first].progress = 0;
+        //mensen toevoegen tot aan changetime
+        int cnt = 0;
+        tr (join, it) {
+            if (it->first <= changetime) {
+                cnt++;
+                bk[it->second.first].q.pb(it->second.second);
+            } else
+                break;
+        }
+        while (cnt--) join.pop_front();
+
+        //voorbijgegane tijd verwerken
+        for (int i = 0; i < n; i++) {
+            int timepast = changetime - time;
+            while (timepast) {
+                if (bk[i].q.empty()) break;
+                int next = bk[i].q.front();
+                if (next == -1)
+                    return changetime - timepast;
+                next += bk[i].timeneeded - bk[i].progress;
+                if (next <= timepast) {
+                    timepast -= next;
+                    bk[i].q.pop_front();
+                    bk[i].progress = 0;
+                } else {
+                    bk[i].progress = timepast;
+                    timepast = 0;
                 }
-                bk[i].change.pop_front();
-                break;
             }
         }
 
-        for (int i = 0; i < n; i++) {
-            if (bk[i].q.empty())
-                continue;
-            int cust = bk[i].q.front();
-            if (cust == -1) //MSX
-                return time;
-            bk[i].progress++;
-            if (bk[i].progress == cust + bk[i].timeneeded) { //customer afgehandeld
-                bk[i].progress = 0;
-                bk[i].q.pop_front();
-            }
-        }
+        time = changetime;
 
-        time++;
+        //consider rijwissel
+        bk[r].timeneeded = perf;
+        bk[r].progress = 0;
+        pair<int, int> curr = best_row(bk, n);
+        if (curr.first != row && curr.second < bk[row].time_msx()) {
+            bk[row].q.erase(find(all(bk[row].q), -1));
+            bk[curr.first].q.pb(-1);
+            row = curr.first;
+        }
     }
+
+    //-1 komt na alle changes
+    return time + bk[row].time_msx();
 }
 
 int main()
@@ -137,7 +146,6 @@ int main()
             while (cust--) {
                 int time;
                 cin >> time;
-                if (mintime == 0 && time == 0) continue;
                 bk[id].q.pb(time);
             }
         }
@@ -145,21 +153,23 @@ int main()
         int nevents;
         cin >> nevents;
 
+        join.clear();
+        change.clear();
         while (nevents--) {
             string kind;
             int time, id, data;
             cin >> kind >> time >> id >> data;
 
             if (kind == "join")
-                bk[id].join.pb(make_pair(time, data));
+                join.pb(make_pair(time, make_pair(id, data)));
             else if (kind == "change")
-                bk[id].change.pb(make_pair(time, data));
+                change.pb(make_pair(time, make_pair(id, data)));
         }
 
-        //for (int i = 0; i < total; i++) {
-        //    sort(all(bk[i].join));
-        //    sort(all(bk[i].change));
-        //}
+        for (int i = 0; i < total; i++) {
+            sort(all(join));
+            sort(all(change));
+        }
 
         cout << simulate(bk, total) << endl;
     }
