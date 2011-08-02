@@ -1,3 +1,4 @@
+// includes {{{
 #include <algorithm>
 #include <bitset>
 #include <cassert>
@@ -22,11 +23,17 @@
 #include <utility>
 #include <vector>
 using namespace std;
-
+// }}}
+// defines {{{
 #define sz(a) int((a).size())
 #define pb push_back
+#define mp make_pair
+#define st first
+#define nd second
 #define all(c) (c).begin(),(c).end()
-#define tr(c,i) for(typeof((c).begin()) i=(c).begin(); i!=(c).end(); i++)
+#define foreach(c,i) for(typeof((c).begin()) i=(c).begin(); i!=(c).end(); ++i)
+// }}}
+
 
 int main()
 {
