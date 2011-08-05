@@ -38,22 +38,14 @@ typedef long long ll;
 
 int main()
 {
-    freopen("in.txt", "r", stdin);
-
     int num;
     cin >> num;
     while (num--) {
-        ll n;
+        int n;
         cin >> n;
 
-        ll t = (n + 2) / 3;
-        ll odd = (n - (n % 3) - (t + (t % 2 == 0))) / 2 + 1;
-        ll even = (2 * n - (n + 1 + (n % 2 == 0))) / 2 + 1;
-
-        if (!n)
-            cout << 0 << endl;
-        else
-            cout << n << ": " << even + odd << endl;
+        int ans = 2 * ceil(n / 2.0) - ceil(((n - 1) / 3) / 2.0);
+        cout << ans << endl;
     }
 
     return 0;
