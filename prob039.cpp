@@ -35,6 +35,7 @@ using namespace std;
 // }}}
 
 #define MAX 100
+#define NUM 6
 
 int main()
 {
@@ -43,34 +44,40 @@ int main()
     int n;
     cin >> n;
     while (n--) {
-        int c[6];
-        for (int i = 0; i < 6; ++i)
+        int c[NUM];
+        for (int i = 0; i < NUM; ++i)
             cin >> c[i];
 
-        int dp[MAX + 1];
-        fill(dp, dp + MAX + 1, 1000);
-        dp[0] = 0;
+        int dp[10*MAX];
+        memset(dp, 0, sizeof(dp));
 
-        //optellen
-        for (int j = 1; j <= MAX; ++j)
-            for (int i = 0; i < 6; ++i)
-                if (c[i] <= j)
-                    dp[j] = min(dp[j], dp[j-c[i]] + 1);
+        queue<int> q;
+        for (int i = 0; i < NUM; ++i) {
+            dp[c[i]] = 1;
+            q.push(c[i]);
+        }
 
-        copy(dp, dp+20, ostream_iterator<int>(cout, " "));
-        cout << endl;
+        while (!q.empty()) {
+            int value = q.front();
+            q.pop();
 
-        //aftrekken
-        for (int j = MAX; j >= 1; --j)
-            for (int i = 0; i < 6; ++i)
-                if (c[i] <= j)
-                    dp[j-c[i]] = min(dp[j-c[i]], dp[j] + 1);
+            for (int i = 0; i < NUM; i++) {
+                int prev = value - c[i];
+                int next = value + c[i];
 
-        copy(dp, dp+20, ostream_iterator<int>(cout, " "));
-        cout << endl;
+                if (prev > 0 && !dp[prev]) {
+                    dp[prev] = dp[value] + 1;
+                    q.push(prev);
+                }
+                if (next < 10 * MAX && !dp[next]) {
+                    dp[next] = dp[value] + 1;
+                    q.push(next);
+                }
+            }
+        }
 
-        printf("%.2f %d\n", accumulate(dp + 1, dp + 101, 0) / 100.0,
-                            *max_element(dp + 1, dp + 101));
+        printf("%.2f %d\n", accumulate(dp + 1, dp + MAX + 1, 0) / 100.0,
+                            *max_element(dp + 1, dp + MAX + 1));
     }
 
     return 0;
