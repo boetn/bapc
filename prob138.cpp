@@ -38,14 +38,29 @@ using namespace std;
 
 vector<int> g[MAX];
 int dist[MAX];
+queue<int> toVisit;
 
-int dfs(int v, int prev)
+int bfs(int start)
 {
-    int max_dist = 0;
-    foreach (g[v], u)
-        if (*u != prev)
-            max_dist = max(max_dist, 1 + dfs(*u, v));
-    return (dist[v] = max_dist);
+    int last;
+    memset(dist, -1, sizeof(dist));
+    toVisit.push(start);
+    dist[start] = 0;
+
+    while (!toVisit.empty()) {
+        int curr = toVisit.front();
+        toVisit.pop();
+        last = curr;
+
+        foreach (g[curr], n) {
+            if (dist[*n] != -1)
+                continue;
+            toVisit.push(*n);
+            dist[*n] = dist[curr] + 1;
+        }
+    }
+
+    return last;
 }
 
 int main()
@@ -59,7 +74,6 @@ int main()
         int numV;
         cin >> numV;
 
-        memset(dist, -1, sizeof(dist));
         for (int i = 0; i < numV; ++i)
             g[i].clear();
 
@@ -70,19 +84,10 @@ int main()
             g[v].pb(u);
         }
 
-        dfs(0, -1);
+        int last = bfs(0);
+        last = bfs(last);
 
-        int max1 = 0, max2 = 0;
-        foreach (g[0], v) {
-            if (dist[*v] + 1 >= max1) {
-                max2 = max1;
-                max1 = dist[*v] + 1;
-            }
-            else if (dist[*v] + 1 >= max2) 
-                max2 = dist[*v] + 1;
-        }
-
-        cout << (max1 + max2 + 1) / 2 << endl;
+        cout << (dist[last] + 1) / 2 << endl;;
     }
 
     return 0;
