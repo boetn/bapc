@@ -52,7 +52,8 @@ int main()
             cin >> source >> dest >> start >> duration;
             calls.pb(pair<int, int>(start, start + duration));
         }
-
+        
+        
         while (m--) {
             int begin, end;
             cin >> begin >> end;
